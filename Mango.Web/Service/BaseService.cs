@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Mango.Web.Utility;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace Mango.Web.Service
 {
@@ -26,7 +27,7 @@ namespace Mango.Web.Service
                 message.RequestUri = new Uri(requestDto.Url);
                 if (requestDto.Data != null)
                 {
-                    message.Content = new StringContent(JsonSerializer.Serialize(requestDto.Data), Encoding.UTF8, "applicaton/json");
+                    message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "applicaton/json");
                 }
                 HttpResponseMessage? apiResponse = null;
                 switch (requestDto.ApiType)
@@ -62,7 +63,7 @@ namespace Mango.Web.Service
                         return new() { IsSuccess = false, Message = "Internal Server Error" };
                     default:
                         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                        var apiResponseDto = JsonSerializer.Deserialize<ResponseDto>(apiContent);
+                        var apiResponseDto = JsonConvert.DeserializeObject<ResponseDto>(apiContent);
                         return apiResponseDto;
 
                 }
