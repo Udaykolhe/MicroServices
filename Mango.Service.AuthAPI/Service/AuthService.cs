@@ -18,12 +18,32 @@ namespace Mango.Service.AuthAPI.Service
                            RoleManager<IdentityRole> roleManager)
         {
             _db = db;
-            _userManager = userManager; 
+            _userManager = userManager;
             _roleManager = roleManager;
         }
-        public Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+        public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
-            throw new NotImplementedException();
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+            bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+            if (user == null || isValid == false)
+            {
+                return new LoginResponseDto() { User = null, Token = "" };
+            }
+            // if user found , Generate Token
+            UserDto userDto = new()
+            {
+                Email = user.Email,
+                Id = user.Id,
+                Name = user.Name,
+                PhoneNumber = user.PhoneNumber
+            };
+
+            LoginResponseDto loginResponseDto = new LoginResponseDto()
+            {
+                User = userDto,
+                Token = ""
+            };
+            return loginResponseDto;
         }
 
         public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
@@ -39,10 +59,10 @@ namespace Mango.Service.AuthAPI.Service
 
             try
             {
-                var result = await _userManager.CreateAsync(user,registrationRequestDto.Password);
+                var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
                 if (result.Succeeded)
                 {
-                    var userToReturn = _db.ApplicationUsers.First(u=>u.UserName == registrationRequestDto.Email);
+                    var userToReturn = _db.ApplicationUsers.First(u => u.UserName == registrationRequestDto.Email);
 
                     UserDto userDto = new()
                     {
@@ -58,9 +78,9 @@ namespace Mango.Service.AuthAPI.Service
                     return result.Errors.FirstOrDefault().Description;
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                
+
             }
             return "Error Encounter";
         }
