@@ -21,10 +21,9 @@ builder.Services.AddScoped<ResponseDto>();
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 var app = builder.Build();
-
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -40,6 +39,7 @@ app.MapControllers();
 ApplyMigration();
 app.Run();
 
+//method for auto migrations
 void ApplyMigration()
 {
     using (var scope = app.Services.CreateScope())
