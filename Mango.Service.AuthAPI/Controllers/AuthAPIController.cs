@@ -1,12 +1,14 @@
 ﻿using Mango.Service.AuthAPI.Model.Dto;
 using Mango.Service.AuthAPI.Service.IService;
 using Mango.Services.AuthAPI.Model.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mango.Service.AuthAPI.Controllers
 {
     [Route("api/auth")]
     [ApiController]
+    [Authorize]
     public class AuthAPIController : ControllerBase
     {
 

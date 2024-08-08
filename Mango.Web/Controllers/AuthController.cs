@@ -35,9 +35,9 @@ namespace Mango.Web.Controllers
         {
             ResponseDto responseDto = await _authService.LoginAsync(obj);
 
-            if (responseDto != null)
+            if (responseDto != null && responseDto.IsSuccess)
             {
-              LoginResponseDto loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto));
+                LoginResponseDto loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Result));
 
                 await SignInUser(loginResponseDto);
                 _tokenProvider.SetToken(loginResponseDto.Token);
@@ -46,13 +46,13 @@ namespace Mango.Web.Controllers
             }
             else
             {
-                ModelState.AddModelError("CustomerError", responseDto.Message);
+                TempData["error"] = responseDto.Message;
                 return View(obj);
             }
-           
+
         }
 
-            [HttpGet]
+        [HttpGet]
         public IActionResult Register()
         {
             var roleList = new List<SelectListItem>()
@@ -71,8 +71,8 @@ namespace Mango.Web.Controllers
             ResponseDto result = await _authService.RegisterAsync(obj);
             ResponseDto assignRole;
 
-            if (result != null)
-            { 
+            if (result != null && result.IsSuccess)
+            {
                 if (string.IsNullOrEmpty(obj.Role))
                 {
 
@@ -80,11 +80,16 @@ namespace Mango.Web.Controllers
                 }
 
                 assignRole = await _authService.AssignRoleAsync(obj);
-                if (assignRole != null)
+                if (assignRole != null && result.IsSuccess)
                 {
                     TempData["Success"] = "Registration Successful";
                     return RedirectToAction(nameof(Login));
                 }
+
+            }
+            else
+            {
+                TempData["error"] = result.Message;
             }
 
             var roleList = new List<SelectListItem>()
@@ -102,7 +107,7 @@ namespace Mango.Web.Controllers
         {
             await HttpContext.SignOutAsync();
             _tokenProvider.ClearToken();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         private async Task SignInUser(LoginResponseDto model)
@@ -123,8 +128,7 @@ namespace Mango.Web.Controllers
 
             identity.AddClaim(new Claim(ClaimTypes.Name,
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
-            identity.AddClaim(new Claim(ClaimTypes.Role,
-                jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
+
 
 
 

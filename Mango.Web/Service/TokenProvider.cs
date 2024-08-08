@@ -8,9 +8,9 @@ namespace Mango.Web.Service
 
         private readonly HttpContextAccessor _contextAccessor;
 
-        public TokenProvider(HttpContextAccessor contextAccessor)
+        public TokenProvider()
         {
-            _contextAccessor = contextAccessor;   
+            _contextAccessor = new HttpContextAccessor();
         }
         public void ClearToken()
         {
