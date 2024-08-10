@@ -19,7 +19,7 @@ namespace Mango.Web.Controllers
             List<CouponDto> list = new();
             ResponseDto? response = await _couponService.GetAllCouponsAsync();
 
-            if (response != null)
+            if (response != null && response.IsSuccess)
             {
                 list = JsonConvert.DeserializeObject<List<CouponDto>>(Convert.ToString(response.Result));
             }
@@ -43,8 +43,7 @@ namespace Mango.Web.Controllers
             if (ModelState.IsValid)
             {
                 ResponseDto? response = await _couponService.CreateCouponsAsync(model);
-                if (response != null)
-                //if (response != null && response.IsSuccess)
+                if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Coupon Created Successfully"; 
                     return RedirectToAction(nameof(CouponIndex));
@@ -62,7 +61,7 @@ namespace Mango.Web.Controllers
         {
             ResponseDto? response = await _couponService.GetCouponByIdAsync(couponId);
 
-            if (response != null)
+            if (response != null && response.IsSuccess)
             {
                 CouponDto? model = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(response.Result));
                 return View(model);
@@ -79,7 +78,7 @@ namespace Mango.Web.Controllers
         public async Task<IActionResult> CouponDelete(CouponDto couponDto)
         {
             ResponseDto? response = await _couponService.DeleteCouponAsync(couponDto.CouponId);
-            if (response != null)
+            if (response != null && response.IsSuccess)
             {
                 TempData["success"] = "Coupon Delete Successfully";
                 return RedirectToAction(nameof(CouponIndex));

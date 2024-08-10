@@ -8,7 +8,7 @@ namespace Mango.Service.AuthAPI.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AuthAPIController : ControllerBase
     {
 
@@ -38,7 +38,7 @@ namespace Mango.Service.AuthAPI.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDto model)
-        {
+            {
             var errorMessage = await _authService.Register(model);
             if (!string.IsNullOrEmpty(errorMessage))
             {

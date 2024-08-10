@@ -75,12 +75,12 @@ namespace Mango.Web.Controllers
             {
                 if (string.IsNullOrEmpty(obj.Role))
                 {
-
                     obj.Role = SD.RoleCustomer;
                 }
 
                 assignRole = await _authService.AssignRoleAsync(obj);
-                if (assignRole != null && result.IsSuccess)
+
+                if (assignRole != null && assignRole.IsSuccess)
                 {
                     TempData["Success"] = "Registration Successful";
                     return RedirectToAction(nameof(Login));
@@ -120,17 +120,16 @@ namespace Mango.Web.Controllers
 
             identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email,
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
+
             identity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub,
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Sub).Value));
+
             identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name,
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Name).Value));
 
 
             identity.AddClaim(new Claim(ClaimTypes.Name,
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
-
-
-
 
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
