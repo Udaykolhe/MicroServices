@@ -30,6 +30,11 @@ namespace Mango.Web.Service
             });
         }
 
+        public Task<ResponseDto?> DeleteCouponsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ResponseDto?> GetAllCouponsAsync()
         {
             return await _baseService.SendAsync(new RequestDto()

@@ -77,7 +77,7 @@ namespace Mango.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CouponDelete(CouponDto couponDto)
         {
-            ResponseDto? response = await _couponService.DeleteCouponAsync(couponDto.CouponId);
+            ResponseDto? response = await _couponService.DeleteCouponsAsync(couponDto.CouponId);
             if (response != null && response.IsSuccess)
             {
                 TempData["success"] = "Coupon Delete Successfully";
